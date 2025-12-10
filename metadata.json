@@ -1,0 +1,7 @@
+{
+  "name": "Rosarium Pro",
+  "description": "A professional-grade rose management application for serious gardeners. Track varieties, fertilization, pruning, and growth history with precision.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
