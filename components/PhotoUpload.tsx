@@ -57,7 +57,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onPhotoSelect, label, 
                   }
               } catch (err) {
                   console.error("Compression error", err);
-                  alert("Failed to process image.");
+                  alert("画像の処理に失敗しました。");
               } finally {
                   setIsProcessing(false);
                   // Reset input value so same file can be selected again if needed
@@ -68,7 +68,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onPhotoSelect, label, 
             img.onerror = () => {
                 console.error("Failed to load image");
                 setIsProcessing(false);
-                alert("Invalid image file.");
+                alert("無効な画像ファイルです。");
             }
 
             if (event.target?.result) {
@@ -108,7 +108,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ onPhotoSelect, label, 
         ) : (
            icon === 'camera' ? <Camera size={18} /> : <ImageIcon size={18} />
         )}
-        {isProcessing ? 'Processing...' : label}
+        {isProcessing ? '処理中...' : label}
       </Button>
     </div>
   );

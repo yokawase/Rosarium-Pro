@@ -1,4 +1,4 @@
-import React, { ReactNode, ErrorInfo } from 'react';
+import React, { Component, ReactNode, ErrorInfo } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AlertCircle, RefreshCcw } from 'lucide-react';
@@ -12,7 +12,7 @@ interface State {
   error: Error | null;
 }
 
-class ErrorBoundary extends React.Component<Props, State> {
+class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -37,9 +37,9 @@ class ErrorBoundary extends React.Component<Props, State> {
             <div className="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-600">
               <AlertCircle size={32} />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">エラーが発生しました</h2>
             <p className="text-sm text-gray-500 mb-8 leading-relaxed">
-              We encountered an unexpected issue. Please try reloading the application.
+              予期せぬ問題が発生しました。アプリを再読み込みしてください。
             </p>
             <button 
               onClick={() => {
@@ -49,10 +49,10 @@ class ErrorBoundary extends React.Component<Props, State> {
               className="w-full py-3.5 bg-rose-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-rose-700 transition-all shadow-lg shadow-rose-200"
             >
               <RefreshCcw size={18} />
-              Reset Data & Reload
+              データをリセットして再読み込み
             </button>
             <p className="mt-4 text-[10px] text-gray-400">
-              Note: This will clear locally stored data if it is corrupted.
+              注意: データが破損している場合、ローカル保存データがクリアされます。
             </p>
           </div>
         </div>

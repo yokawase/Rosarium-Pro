@@ -28,86 +28,86 @@ export const BREEDERS: Record<string, string[]> = {
 };
 
 export const FERTILIZERS: { value: FertilizerType; label: string }[] = [
-  { value: 'VITALIZER', label: '活力剤 (Vitalizer)' },
-  { value: 'SOLID', label: '固形肥料 (Solid)' },
-  { value: 'LIQUID', label: '液体肥料 (Liquid)' },
+  { value: 'VITALIZER', label: '活力剤' },
+  { value: 'SOLID', label: '固形肥料' },
+  { value: 'LIQUID', label: '液体肥料' },
 ];
 
 export const TRANSPLANT_TYPES = [
-  { value: 'TRANSPLANT', label: '植え替え (Repotting)' },
-  { value: 'POT_UP', label: '鉢増し (Pot Up)' },
-  { value: 'SOIL_RENEWAL', label: '用土替え (Soil Renewal)' },
-  { value: 'GROUND', label: '地植え (Planting in Ground)' },
+  { value: 'TRANSPLANT', label: '植え替え' },
+  { value: 'POT_UP', label: '鉢増し' },
+  { value: 'SOIL_RENEWAL', label: '用土替え' },
+  { value: 'GROUND', label: '地植え' },
 ];
 
 export const SOIL_TYPES = [
-  { value: 'PREMIUM_ROSE', label: 'プレミアムローズ培養土 (Premium)' },
-  { value: 'BIOGOLD', label: 'バイオゴールドの土 (Biogold)' },
-  { value: 'AUSTIN', label: 'オースチンバラの土 (Austin)' },
-  { value: 'BARANOIE', label: 'バラの家 培養土 (Baranoie)' },
+  { value: 'PREMIUM_ROSE', label: 'プレミアムローズ培養土' },
+  { value: 'BIOGOLD', label: 'バイオゴールドの土' },
+  { value: 'AUSTIN', label: 'オースチンバラの土' },
+  { value: 'BARANOIE', label: 'バラの家 培養土' },
   { value: 'HYPONEX', label: 'ハイポネックス バラの培養土' },
-  { value: 'AKADAMA', label: '赤玉土 (Akadama)' },
-  { value: 'COMPOST', label: '堆肥 (Compost)' },
-  { value: 'PEAT', label: 'ピートモス (Peat Moss)' },
-  { value: 'OTHER', label: 'その他 (Other)' },
+  { value: 'AKADAMA', label: '赤玉土' },
+  { value: 'COMPOST', label: '堆肥' },
+  { value: 'PEAT', label: 'ピートモス' },
+  { value: 'OTHER', label: 'その他' },
 ];
 
 export const ISSUES = [
-  { label: '黒星病 (Black Spot)', type: 'DISEASE' },
-  { label: 'うどんこ病 (Mildew)', type: 'DISEASE' },
-  { label: 'アブラムシ (Aphids)', type: 'PEST' },
-  { label: 'コガネムシ (Beetles)', type: 'PEST' },
-  { label: 'チュウレンジハバチ (Sawfly)', type: 'PEST' },
-  { label: 'カイガラムシ (Scale)', type: 'PEST' },
-  { label: '薬剤散布 (Spray Prevention)', type: 'PREVENTION' },
+  { label: '黒星病', type: 'DISEASE' },
+  { label: 'うどんこ病', type: 'DISEASE' },
+  { label: 'アブラムシ', type: 'PEST' },
+  { label: 'コガネムシ', type: 'PEST' },
+  { label: 'チュウレンジハバチ', type: 'PEST' },
+  { label: 'カイガラムシ', type: 'PEST' },
+  { label: '薬剤散布', type: 'PREVENTION' },
 ];
 
 // Dictionary for auto-filling rose features
 export const ROSE_LIBRARY: Record<string, { type: number; feature: string }> = {
   // Rosa Orientis
-  "シェエラザード": { type: 1, feature: "Deep pink, pointed petals, strong damask scent. Very distinct." },
-  "オデュッセイア": { type: 2, feature: "Bluish crimson, wavy petals, rich damask fragrance. Climber potential." },
-  "ダフネ": { type: 1, feature: "Soft pink ruffles, fades to green. Excellent disease resistance." },
-  "マイローズ": { type: 0, feature: "Type 0 resistance! Pure red, compact, continuous bloomer." },
-  "シャリマー": { type: 0, feature: "Soft pink to white gradient. Highly resistant (Type 0) and fragrant." },
-  "リュシオール": { type: 0, feature: "Bright yellow, Type 0. Compact and disease resistant." },
-  "トロイメライ": { type: 0, feature: "Pink apricot blend. Very fragrant and highly resistant." },
-  "リラ": { type: 0, feature: "Lilac purple. Type 0. Deep fragrance and classic shape." },
+  "シェエラザード": { type: 1, feature: "濃いピンク、剣弁、強いダマスク香。非常に個性的でアラビアンナイトの世界観。" },
+  "オデュッセイア": { type: 2, feature: "青みがかったクリムゾン、波状弁、豊かなダマスク香。つるバラとしても仕立て可能。" },
+  "ダフネ": { type: 1, feature: "柔らかなピンクの波状弁、退色して緑がかる。耐病性に優れる。" },
+  "マイローズ": { type: 0, feature: "タイプ0の最強耐病性！純赤、コンパクト、絶え間なく咲く完全四季咲き。" },
+  "シャリマー": { type: 0, feature: "ソフトピンクから白のグラデーション。タイプ0の耐病性と香りを両立。" },
+  "リュシオール": { type: 0, feature: "鮮やかな黄色、タイプ0。コンパクトで耐病性が高い。" },
+  "トロイメライ": { type: 0, feature: "ピンクとアプリコットの混ざるロゼット咲き。香りが良く、耐病性も最強クラス。" },
+  "リラ": { type: 0, feature: "藤色のバラでタイプ0を実現。深い香りと整った花形。" },
   
   // David Austin
-  "オリビア・ローズ・オースチン": { type: 1, feature: "Soft pink cupped rosettes. Fruity fragrance. Extremely healthy." },
-  "ボスコベル": { type: 2, feature: "Rich salmon-pink. Complex myrrh and hawthorn fragrance." },
-  "ガブリエル・オーク": { type: 1, feature: "Deep pink, many petalled rosette. Strong fruity fragrance." },
-  "ユーステイシア・ヴァイ": { type: 2, feature: "Soft apricot-pink. Intense fruity fragrance." },
-  "デスデモーナ": { type: 1, feature: "Peachy pink buds opening to white. Old rose fragrance." },
-  "レディ・エマ・ハミルトン": { type: 2, feature: "Tangerine orange-yellow. Strong fruity scent. Dark bronze foliage." },
-  "クイーン・オブ・スウェーデン": { type: 2, feature: "Soft pink, upright growth. Myrrh fragrance. Very elegant." },
-  "ジュード・ジ・オブスキュア": { type: 3, feature: "Buff yellow. Extremely strong citrus/guava fragrance." },
+  "オリビア・ローズ・オースチン": { type: 1, feature: "ソフトピンクのカップ咲き。フルーツの香り。非常に健康で育てやすい。" },
+  "ボスコベル": { type: 2, feature: "リッチなサーモンピンク。ミルラとサンザシの複雑な香り。" },
+  "ガブリエル・オーク": { type: 1, feature: "濃いピンク、花弁の多いロゼット咲き。強いフルーツ香。" },
+  "ユーステイシア・ヴァイ": { type: 2, feature: "ソフトなアプリコットピンク。強烈なフルーツの香り。" },
+  "デスデモーナ": { type: 1, feature: "ピーチピンクの蕾から白花へ。オールドローズの香り。" },
+  "レディ・エマ・ハミルトン": { type: 2, feature: "タンジェリンオレンジ。強いフルーツ香。銅葉も美しい。" },
+  "クイーン・オブ・スウェーデン": { type: 2, feature: "ソフトピンク、直立性。ミルラの香り。非常にエレガント。" },
+  "ジュード・ジ・オブスキュア": { type: 3, feature: "バフイエロー。シトラスとグアバの非常に強い香り。" },
   
   // Kawamoto
-  "ガブリエル": { type: 3, feature: "Pure white with purple center. Heavenly scent but requires care (Type 3)." },
-  "ルシファー": { type: 3, feature: "Pale lilac, mysterious beauty. Needs protection from pests/disease." },
-  "ラ・マリエ": { type: 2, feature: "Frilly pink petals, distinct scent. 'The Bride'." },
-  "サフィレット": { type: 2, feature: "White with mauve shading. Unique vintage look." },
-  "コフレ": { type: 2, feature: "Mauve/Green outer petals. Excellent vase life. Very popular." },
+  "ガブリエル": { type: 3, feature: "純白に中心が紫。天国のような香りだが繊細（タイプ3）。" },
+  "ルシファー": { type: 3, feature: "淡いライラック色、神秘的な美しさ。病害虫からの保護が必要。" },
+  "ラ・マリエ": { type: 2, feature: "フリルのあるピンクの花弁、独特の香り。「花嫁」の名を持つ。" },
+  "サフィレット": { type: 2, feature: "白に淡い紫の陰影。独特のアンティークな雰囲気。" },
+  "コフレ": { type: 2, feature: "外弁が緑、中が紫のロゼット咲き。花持ちが非常に良い。" },
   
   // Delbard
-  "ナエマ": { type: 2, feature: "Soft pink, cup-shaped. Intense fruity/citrus fragrance. Vigorous climber." },
-  "クロード・モネ": { type: 2, feature: "Pink with yellow stripes. Very painterly. Good scent." },
-  "ラ・パリジェンヌ": { type: 1, feature: "Orange, yellow, pink blend. Very free flowering and healthy." },
-  "エドゥアール・マネ": { type: 2, feature: "Light yellow with pink stripes. Fruity fragrance. Climber." },
+  "ナエマ": { type: 2, feature: "ソフトピンク、カップ咲き。強烈なフルーツとシトラスの香り。旺盛なつるバラ。" },
+  "クロード・モネ": { type: 2, feature: "ピンクに黄色の絞りが入る。絵画的。香りも良い。" },
+  "ラ・パリジェンヌ": { type: 1, feature: "オレンジ、黄、ピンクのブレンド。非常によく咲き、健康的。" },
+  "エドゥアール・マネ": { type: 2, feature: "淡い黄色にピンクの絞り。フルーツの香り。つるバラ仕立て向き。" },
   
   // Meilland
-  "ピエール・ドゥ・ロンサール": { type: 2, feature: "Creamy white with pink edge. World's favorite climber. Mild scent." },
-  "ボレロ": { type: 1, feature: "Pure white, packed with petals. Strong fruity fragrance. Compact." },
-  "レオナルド・ダ・ヴィンチ": { type: 1, feature: "Bengal pink. Very tough, rain resistant. Mild scent." },
+  "ピエール・ドゥ・ロンサール": { type: 2, feature: "クリームホワイトにピンクの覆輪。世界で最も愛されるつるバラの一つ。" },
+  "ボレロ": { type: 1, feature: "純白、花弁がぎっしり詰まる。強いフルーツ香。コンパクト。" },
+  "レオナルド・ダ・ヴィンチ": { type: 1, feature: "ベンガルピンク。非常に丈夫で雨にも強い。香りは微香。" },
   
   // Keisei
-  "快挙": { type: 1, feature: "Bright yellow, large flowers. Good resistance." },
-  "薫乃": { type: 2, feature: "Soft cream/pink. Incredible fragrance (Perfume industry standard)." },
-  "ローズうらら": { type: 1, feature: "Shocking pink. Extremely robust and floriferous." },
+  "快挙": { type: 1, feature: "鮮やかな黄色、大輪。耐病性が良く育てやすい。" },
+  "薫乃": { type: 2, feature: "ソフトなクリームピンク。素晴らしい香り（香りのコンクール受賞多数）。" },
+  "ローズうらら": { type: 1, feature: "ショッキングピンク。非常に強健で花付きが良い。" },
   
   // Tantau
-  "レイニー・ブルー": { type: 2, feature: "Violet-blue clusters. Gentle climber. Very popular in Japan." },
-  "ノスタルジー": { type: 1, feature: "Cherry red edges, creamy white center. Distinct bi-color." }
+  "レイニー・ブルー": { type: 2, feature: "藤色の小輪房咲き。しなやかなつるバラ。日本で非常に人気。" },
+  "ノスタルジー": { type: 1, feature: "チェリーレッドの覆輪に中心がクリーム白。独特のバイカラー。" }
 };

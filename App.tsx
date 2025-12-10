@@ -26,9 +26,9 @@ const Header: React.FC<{
     <div className="flex items-center gap-3 shrink-0 ml-2">
       {saveStatus && saveStatus !== 'idle' && (
         <div className={`flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider transition-opacity duration-300 ${saveStatus === 'saved' ? 'opacity-100' : 'opacity-80'}`}>
-           {saveStatus === 'saving' && <span className="text-gray-400">Saving...</span>}
-           {saveStatus === 'saved' && <span className="text-emerald-600 flex items-center gap-1"><Check size={12} /> Saved</span>}
-           {saveStatus === 'error' && <span className="text-rose-600 flex items-center gap-1"><AlertCircle size={12} /> Error</span>}
+           {saveStatus === 'saving' && <span className="text-gray-400">保存中...</span>}
+           {saveStatus === 'saved' && <span className="text-emerald-600 flex items-center gap-1"><Check size={12} /> 保存済</span>}
+           {saveStatus === 'error' && <span className="text-rose-600 flex items-center gap-1"><AlertCircle size={12} /> エラー</span>}
         </div>
       )}
       {rightAction && <div>{rightAction}</div>}
@@ -60,7 +60,7 @@ const EditVarietyModal: React.FC<{
     // Check if name changed and matches library for auto-update
     if (name !== rose.name && ROSE_LIBRARY[name]) {
         const meta = ROSE_LIBRARY[name];
-        if (confirm(`Update variety details (Type ${meta.type}, Feature) based on "${name}"?`)) {
+        if (confirm(`"${name}" の情報（タイプ ${meta.type}, 特徴）で品種詳細を更新しますか？`)) {
             updatedRose = {
                 ...updatedRose,
                 roseType: meta.type,
@@ -77,13 +77,13 @@ const EditVarietyModal: React.FC<{
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6">
         <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold text-gray-900">Edit Variety Info</h3>
+            <h3 className="text-lg font-bold text-gray-900">品種情報の編集</h3>
             <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20}/></button>
         </div>
         
         <div className="space-y-4 mb-6">
             <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Variety Name</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">品種名</label>
                 <input 
                     type="text"
                     className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-900 focus:outline-none font-bold text-gray-800"
@@ -92,7 +92,7 @@ const EditVarietyModal: React.FC<{
                 />
             </div>
             <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Breeder</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">作出者 / ブランド</label>
                 <select 
                     className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-900 focus:outline-none"
                     value={breeder}
@@ -107,24 +107,24 @@ const EditVarietyModal: React.FC<{
 
         <div className="space-y-3">
             <Button onClick={handleSave} className="w-full">
-                <CheckCircle2 size={18} className="mr-2"/> Save Changes
+                <CheckCircle2 size={18} className="mr-2"/> 変更を保存
             </Button>
             
             <div className="relative flex py-2 items-center">
                 <div className="flex-grow border-t border-gray-200"></div>
-                <span className="flex-shrink-0 mx-4 text-gray-300 text-xs">Danger Zone</span>
+                <span className="flex-shrink-0 mx-4 text-gray-300 text-xs">危険エリア</span>
                 <div className="flex-grow border-t border-gray-200"></div>
             </div>
 
             <button 
                 onClick={() => {
-                    if(confirm("Are you sure you want to delete this variety completely?")) {
+                    if(confirm("本当にこの品種を完全に削除しますか？\n全ての履歴と写真が失われます。")) {
                         onDelete();
                     }
                 }}
                 className="w-full py-3 text-rose-600 bg-rose-50 rounded-lg font-medium hover:bg-rose-100 transition-colors flex items-center justify-center gap-2"
             >
-                <Trash2 size={16} /> Delete Variety
+                <Trash2 size={16} /> 品種を削除
             </button>
         </div>
       </div>
@@ -216,7 +216,7 @@ export default function App() {
   };
 
   const deleteRose = (id: string) => {
-    if (window.confirm("Delete this variety?\nThis action cannot be undone and all data will be lost.")) {
+    if (window.confirm("この品種を削除しますか？\n元に戻すことはできず、全てのデータが失われます。")) {
       setRoses(prev => prev.filter(r => r.id !== id));
       setView({ type: 'LIST' });
       setEditingRose(null);
@@ -244,7 +244,7 @@ export default function App() {
     !isSecure ? (
       <div className="bg-amber-100 border-b border-amber-200 text-amber-900 px-4 py-2 text-xs flex items-center justify-center gap-2 font-medium">
         <ShieldAlert size={14} />
-        <span>For Camera access, please use HTTPS.</span>
+        <span>カメラ機能を使用するにはHTTPS接続が必要です。</span>
       </div>
     ) : null
   );
@@ -271,7 +271,7 @@ export default function App() {
             <div className="relative z-10 flex justify-between items-start">
               <div>
                 <h1 className="text-3xl font-serif font-bold mb-1">Rosarium Pro</h1>
-                <p className="text-emerald-100 text-sm">Manage your garden with precision.</p>
+                <p className="text-emerald-100 text-sm">あなたの庭を正確に管理します。</p>
               </div>
               <button 
                 onClick={() => setView({ type: 'SETTINGS' })}
@@ -285,10 +285,10 @@ export default function App() {
           <main className="px-4 -mt-6 relative z-20 space-y-4">
             <div className="bg-white rounded-xl shadow-sm p-4 flex items-center justify-between">
                <div className="text-gray-600 text-sm">
-                 <span className="font-bold text-gray-900 text-lg mr-1">{roses.length}</span> Varieties
+                 <span className="font-bold text-gray-900 text-lg mr-1">{roses.length}</span> 品種
                </div>
                <Button size="sm" onClick={() => setView({ type: 'NEW' })}>
-                 <Plus size={16} className="mr-1" /> Add New
+                 <Plus size={16} className="mr-1" /> 新規追加
                </Button>
             </div>
 
@@ -296,8 +296,8 @@ export default function App() {
               {roses.length === 0 ? (
                 <div className="text-center py-12 text-gray-400 bg-white rounded-xl border-2 border-dashed border-gray-200">
                   <Leaf size={48} className="mx-auto mb-3 opacity-20" />
-                  <p>No roses registered yet.</p>
-                  <p className="text-sm">Add your first variety to start tracking.</p>
+                  <p>まだバラが登録されていません。</p>
+                  <p className="text-sm">最初の品種を追加して記録を始めましょう。</p>
                 </div>
               ) : (
                 roses.map(rose => (
@@ -341,7 +341,7 @@ export default function App() {
                           {rose.name}
                         </h3>
                         <p className="text-xs text-gray-400 mt-1">
-                          Registered: {new Date(rose.registrationDate).toLocaleDateString()}
+                          登録日: {new Date(rose.registrationDate).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
@@ -352,7 +352,7 @@ export default function App() {
                             setEditingRose(rose);
                         }}
                         className="p-3 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-colors z-10"
-                        title="Edit Variety Name"
+                        title="品種名の編集"
                     >
                         <Pencil size={20} />
                     </button>
@@ -432,16 +432,16 @@ const SettingsScreen: React.FC<{
       try {
         const json = JSON.parse(event.target?.result as string);
         if (Array.isArray(json)) {
-          if (confirm("This will replace your current data with the imported file. Are you sure?")) {
+          if (confirm("現在のデータをインポートしたファイルで置き換えます。よろしいですか？")) {
             onImport(json);
-            alert("Data imported successfully!");
+            alert("データが正常にインポートされました！");
           }
         } else {
-          alert("Invalid file format.");
+          alert("無効なファイル形式です。");
         }
       } catch (err) {
         console.error(err);
-        alert("Failed to parse JSON file.");
+        alert("JSONファイルの解析に失敗しました。");
       }
     };
     reader.readAsText(file);
@@ -449,15 +449,15 @@ const SettingsScreen: React.FC<{
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header title="Data Management" onBack={onBack} />
+      <Header title="データ管理" onBack={onBack} />
       <main className="p-4 space-y-6">
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 space-y-4">
           <div className="flex items-center gap-3 text-emerald-900">
              <Save size={24} />
-             <h2 className="font-bold text-lg">Storage Options</h2>
+             <h2 className="font-bold text-lg">保存オプション</h2>
           </div>
           <p className="text-sm text-gray-500">
-            Data is saved to your browser. Use Export to backup your data.
+            データはブラウザに保存されています。バックアップには「書き出し」を使用してください。
           </p>
           
           <div className="pt-4 space-y-3">
@@ -466,9 +466,9 @@ const SettingsScreen: React.FC<{
                className="w-full flex items-center justify-between p-4 bg-emerald-50 text-emerald-900 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-colors"
              >
                <span className="flex items-center gap-2 font-medium">
-                 <Download size={20} /> Export Data (JSON)
+                 <Download size={20} /> データ書き出し (JSON)
                </span>
-               <span className="text-xs opacity-70">Backup</span>
+               <span className="text-xs opacity-70">バックアップ</span>
              </button>
 
              <button 
@@ -476,9 +476,9 @@ const SettingsScreen: React.FC<{
                className="w-full flex items-center justify-between p-4 bg-white text-gray-700 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
              >
                <span className="flex items-center gap-2 font-medium">
-                 <Upload size={20} /> Import Data
+                 <Upload size={20} /> データ読み込み
                </span>
-               <span className="text-xs text-gray-400">Restore</span>
+               <span className="text-xs text-gray-400">復元</span>
              </button>
              <input 
                type="file" 
@@ -529,10 +529,10 @@ const NewRoseScreen: React.FC<{
 
   return (
     <div className="min-h-screen bg-white">
-      <Header title="New Variety" onBack={onCancel} saveStatus={saveStatus} />
+      <Header title="新品種登録" onBack={onCancel} saveStatus={saveStatus} />
       <main className="p-4 max-w-lg mx-auto space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Breeder / Brand</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">作出者 / ブランド</label>
           <select 
             className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-900 focus:outline-none"
             value={breeder}
@@ -541,7 +541,7 @@ const NewRoseScreen: React.FC<{
               setName('');
             }}
           >
-            <option value="">Select Breeder</option>
+            <option value="">作出者を選択</option>
             {Object.keys(BREEDERS).map(b => (
               <option key={b} value={b}>{b}</option>
             ))}
@@ -550,17 +550,17 @@ const NewRoseScreen: React.FC<{
 
         {breeder && (
           <div className="animate-fade-in">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Variety Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">品種名</label>
             <select 
               className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-900 focus:outline-none"
               value={name}
               onChange={(e) => setName(e.target.value)}
             >
-              <option value="">Select Variety</option>
+              <option value="">品種を選択</option>
               {BREEDERS[breeder].map(n => (
                 <option key={n} value={n}>{n}</option>
               ))}
-              <option value="OTHER">Other (Enter manually)</option>
+              <option value="OTHER">その他 (手入力)</option>
             </select>
           </div>
         )}
@@ -571,7 +571,7 @@ const NewRoseScreen: React.FC<{
                     <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
                         Type {ROSE_LIBRARY[name].type}
                     </span>
-                    <span className="text-sm font-medium text-emerald-900">Auto-detected</span>
+                    <span className="text-sm font-medium text-emerald-900">自動検出</span>
                 </div>
                 <p className="text-sm text-gray-700 italic">"{ROSE_LIBRARY[name].feature}"</p>
             </div>
@@ -579,11 +579,11 @@ const NewRoseScreen: React.FC<{
 
         {name === 'OTHER' && (
           <div className="animate-fade-in">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Custom Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">品種名 (手入力)</label>
             <input
               type="text"
               className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-900 focus:outline-none"
-              placeholder="Enter variety name"
+              placeholder="品種名を入力"
               value={customName}
               onChange={(e) => setCustomName(e.target.value)}
             />
@@ -596,7 +596,7 @@ const NewRoseScreen: React.FC<{
             onClick={handleSave}
             disabled={!breeder || !name || (name === 'OTHER' && !customName)}
           >
-            Register to Garden
+            庭に登録する
           </Button>
         </div>
       </main>
@@ -631,7 +631,7 @@ const RoseDetailScreen: React.FC<{
   };
 
   const deletePhoto = (photoId: string) => {
-    if(confirm("Delete this photo?")) {
+    if(confirm("この写真を削除しますか？")) {
         onUpdate({ ...rose, photos: rose.photos.filter(p => p.id !== photoId) });
     }
   }
@@ -645,7 +645,7 @@ const RoseDetailScreen: React.FC<{
   }
 
   const deleteNote = (noteId: string) => {
-      if(confirm("Delete this note?")) {
+      if(confirm("この日誌を削除しますか？")) {
           onUpdate({ ...rose, notes: (rose.notes || []).filter(n => n.id !== noteId)});
       }
   }
@@ -664,7 +664,7 @@ const RoseDetailScreen: React.FC<{
                   <button
                       onClick={onEdit}
                       className="p-2 text-gray-500 hover:text-emerald-800 transition-colors bg-gray-50 rounded-full border border-gray-200"
-                      title="Edit Variety Info"
+                      title="品種情報を編集"
                   >
                       <Edit3 size={18} />
                   </button>
@@ -697,10 +697,10 @@ const RoseDetailScreen: React.FC<{
         <div className="bg-white border-b border-gray-200 overflow-x-auto no-scrollbar">
           <div className="flex min-w-full">
             {[
-              { id: 'CARE', label: 'Care', icon: Droplets },
-              { id: 'PRUNING', label: 'Pruning', icon: Scissors },
-              { id: 'GALLERY', label: 'Blooms', icon: Flower2 },
-              { id: 'MEMO', label: 'Journal', icon: BookOpen },
+              { id: 'CARE', label: 'お世話', icon: Droplets },
+              { id: 'PRUNING', label: '剪定', icon: Scissors },
+              { id: 'GALLERY', label: '開花', icon: Flower2 },
+              { id: 'MEMO', label: '日誌', icon: BookOpen },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -813,7 +813,7 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
         return `${name} (${c.percent}%)`;
     }).join(' + ');
 
-    const details = `${typeLabel}${potSize ? ` [${potSize}]` : ''} | Soil: ${soilDetails}`;
+    const details = `${typeLabel}${potSize ? ` [${potSize}]` : ''} | 用土: ${soilDetails}`;
 
     const [year, month, day] = transplantDate.split('-').map(Number);
     const date = new Date(year, month - 1, day);
@@ -893,7 +893,7 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
 
   const deleteEvent = () => {
       if (!editingEventId) return;
-      if (confirm("Delete this event?")) {
+      if (confirm("このイベントを削除しますか？")) {
           onUpdate({ ...rose, events: rose.events.filter(e => e.id !== editingEventId) });
           setEditingEventId(null);
       }
@@ -902,10 +902,10 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
   return (
     <div className="space-y-6 pb-10">
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-        <SectionTitle icon={Calendar} title="Milestones" />
+        <SectionTitle icon={Calendar} title="マイルストーン" />
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-xs text-gray-500 font-medium uppercase">Planting Date</label>
+            <label className="text-xs text-gray-500 font-medium uppercase">植付日</label>
             <input 
               type="date" 
               className="w-full mt-1 p-2 bg-gray-50 rounded border border-gray-200 text-sm"
@@ -914,7 +914,7 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
             />
           </div>
           <div>
-            <label className="text-xs text-gray-500 font-medium uppercase">Last Transplant</label>
+            <label className="text-xs text-gray-500 font-medium uppercase">最終植替日</label>
             <input 
               type="date" 
               className="w-full mt-1 p-2 bg-gray-50 rounded border border-gray-200 text-sm"
@@ -926,11 +926,11 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
       </div>
 
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-        <SectionTitle icon={Shovel} title="Soil & Pot" color="text-amber-900" />
+        <SectionTitle icon={Shovel} title="土と鉢" color="text-amber-900" />
         <div className="space-y-4">
              <div className="grid grid-cols-2 gap-2">
                 <div>
-                    <label className="text-xs text-gray-500 font-medium mb-1 block">Date</label>
+                    <label className="text-xs text-gray-500 font-medium mb-1 block">日付</label>
                     <input 
                     type="date"
                     className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
@@ -939,7 +939,7 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
                     />
                 </div>
                 <div>
-                    <label className="text-xs text-gray-500 font-medium mb-1 block">Action</label>
+                    <label className="text-xs text-gray-500 font-medium mb-1 block">作業</label>
                     <select
                         className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
                         value={transplantType}
@@ -953,10 +953,10 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
              </div>
 
              <div>
-                <label className="text-xs text-gray-500 font-medium mb-1 block">Pot Size / Details</label>
+                <label className="text-xs text-gray-500 font-medium mb-1 block">鉢サイズ / 詳細</label>
                 <input 
                     type="text"
-                    placeholder="Ex: 8号 -> 10号"
+                    placeholder="例: 8号 -> 10号"
                     className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
                     value={potSize}
                     onChange={(e) => setPotSize(e.target.value)}
@@ -965,9 +965,9 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
 
              <div className="bg-amber-50/50 rounded-lg p-3 border border-amber-100">
                 <div className="flex justify-between items-center mb-2">
-                    <label className="text-xs text-amber-900 font-bold uppercase">Soil Blend</label>
+                    <label className="text-xs text-amber-900 font-bold uppercase">用土ブレンド</label>
                     <span className={`text-xs font-bold ${totalSoilPercent === 100 ? 'text-emerald-600' : 'text-amber-600'}`}>
-                        Total: {totalSoilPercent}%
+                        合計: {totalSoilPercent}%
                     </span>
                 </div>
                 
@@ -987,7 +987,7 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
                                 {mix.type === 'OTHER' && (
                                     <input 
                                         type="text"
-                                        placeholder="Enter soil name"
+                                        placeholder="土の名前を入力"
                                         className="w-full p-1.5 bg-white border border-gray-200 rounded text-xs"
                                         value={mix.customName || ''}
                                         onChange={(e) => updateSoilComponent(mix.id, 'customName', e.target.value)}
@@ -1023,10 +1023,10 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
                         onClick={addSoilComponent}
                         className="text-xs font-medium text-amber-800 flex items-center gap-1 hover:underline"
                     >
-                        <Plus size={12} /> Add Component {totalSoilPercent !== 100 && `(${100 - totalSoilPercent}% left)`}
+                        <Plus size={12} /> 用土を追加 {totalSoilPercent !== 100 && `(残り ${100 - totalSoilPercent}%)`}
                     </button>
                     {soilMix.length === 2 && (
-                         <span className="text-[10px] text-amber-600/70 italic">Auto-balancing active</span>
+                         <span className="text-[10px] text-amber-600/70 italic">自動バランス有効</span>
                     )}
                 </div>
              </div>
@@ -1036,17 +1036,17 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
                 className="w-full bg-amber-800 hover:bg-amber-900 focus:ring-amber-800"
                 disabled={totalSoilPercent !== 100}
             >
-                Record {totalSoilPercent !== 100 && `(Total must be 100%)`}
+                記録する {totalSoilPercent !== 100 && `(合計を100%にしてください)`}
              </Button>
         </div>
       </div>
 
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-        <SectionTitle icon={Droplets} title="Fertilizer" />
+        <SectionTitle icon={Droplets} title="肥料" />
         
         <div className="space-y-3">
             <div>
-                <label className="text-xs text-gray-500 font-medium mb-1 block">Date</label>
+                <label className="text-xs text-gray-500 font-medium mb-1 block">日付</label>
                 <input 
                   type="date"
                   className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
@@ -1057,7 +1057,7 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
 
             <div className="flex gap-2 items-end">
               <div className="flex-1">
-                <label className="text-xs text-gray-500 font-medium mb-1 block">Type</label>
+                <label className="text-xs text-gray-500 font-medium mb-1 block">種類</label>
                 <select
                   className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
                   value={fertilizerType}
@@ -1069,17 +1069,17 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
                 </select>
               </div>
               <Button onClick={handleAddFertilizer} size="sm" className="h-[38px] min-w-[80px]">
-                Record
+                記録
               </Button>
             </div>
         </div>
       </div>
 
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-        <SectionTitle icon={Bug} title="Dr. Rose (Health)" color="text-rose-900" />
+        <SectionTitle icon={Bug} title="ドクターローズ (健康診断)" color="text-rose-900" />
         
         <div className="mb-3">
-            <label className="text-xs text-gray-500 font-medium mb-1 block">Date of Observation</label>
+            <label className="text-xs text-gray-500 font-medium mb-1 block">観察日</label>
             <input 
               type="date"
               className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
@@ -1108,9 +1108,9 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
       </div>
 
       <div>
-        <SectionTitle icon={History} title="History" />
+        <SectionTitle icon={History} title="履歴" />
         <div className="space-y-3 mt-2">
-          {rose.events.length === 0 && <p className="text-sm text-gray-400 italic">No history events yet.</p>}
+          {rose.events.length === 0 && <p className="text-sm text-gray-400 italic">履歴はまだありません。</p>}
           {rose.events.map(event => (
             <div key={event.id} className="flex gap-3 bg-white p-3 rounded-lg border border-gray-100 shadow-sm items-start group">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
@@ -1130,9 +1130,9 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
               {editingEventId === event.id ? (
                   <div className="flex-1 space-y-2 animate-fade-in">
                       <div className="flex justify-between items-center">
-                          <label className="text-xs font-bold text-gray-500 uppercase">Edit Event</label>
+                          <label className="text-xs font-bold text-gray-500 uppercase">イベント編集</label>
                           <button onClick={deleteEvent} className="text-xs text-rose-600 bg-rose-50 px-2 py-1 rounded hover:bg-rose-100 flex items-center gap-1">
-                             <Trash2 size={12} /> Delete
+                             <Trash2 size={12} /> 削除
                           </button>
                       </div>
                       <input 
@@ -1146,14 +1146,14 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
                         className="w-full p-2 border border-gray-200 rounded text-sm focus:ring-2 focus:ring-emerald-900 focus:outline-none"
                         value={editForm.details}
                         onChange={e => setEditForm({...editForm, details: e.target.value})}
-                        placeholder="Details"
+                        placeholder="詳細"
                       />
                       <div className="flex gap-2 mt-2">
                           <Button size="sm" onClick={saveEditedEvent} className="py-1 h-8 text-xs flex-1">
-                             <Check size={14} className="mr-1"/> Save
+                             <Check size={14} className="mr-1"/> 保存
                           </Button>
                           <Button size="sm" variant="secondary" onClick={() => setEditingEventId(null)} className="py-1 h-8 text-xs flex-1">
-                             <X size={14} className="mr-1"/> Cancel
+                             <X size={14} className="mr-1"/> キャンセル
                           </Button>
                       </div>
                   </div>
@@ -1165,7 +1165,7 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
                     <button 
                         onClick={() => startEditingEvent(event)} 
                         className="absolute top-0 right-0 p-1.5 text-gray-300 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-all"
-                        title="Edit Event"
+                        title="イベントを編集"
                     >
                         <Pencil size={14} />
                     </button>
@@ -1178,14 +1178,14 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
       
       {/* Danger Zone */}
       <div className="mt-8 pt-6 border-t border-gray-200 pb-10">
-        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Management</h3>
+        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">管理</h3>
         <button 
             onClick={() => {
                 if (onDelete) onDelete();
             }}
             className="w-full py-3 bg-gray-50 text-gray-500 rounded-xl border border-gray-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-colors flex items-center justify-center gap-2 font-medium"
         >
-            <Trash2 size={16} /> Delete Variety
+            <Trash2 size={16} /> 品種を削除
         </button>
       </div>
     </div>
@@ -1211,7 +1211,7 @@ const PruningTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => vo
     }
     const isoDate = date.toISOString();
 
-    const detailText = pruningDetails.trim() || 'Pruning Session';
+    const detailText = pruningDetails.trim() || '剪定作業';
     
     onAddEvent({
         id: crypto.randomUUID(),
@@ -1284,12 +1284,12 @@ const PruningTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => vo
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
         <div className="flex items-center gap-2 mb-4 text-rose-900 font-bold border-b border-rose-100 pb-2">
             <Scissors size={18} />
-            <h3>New Pruning Record</h3>
+            <h3>新しい剪定記録</h3>
         </div>
         
         <div className="space-y-4">
             <div>
-                <label className="text-xs text-gray-500 font-medium mb-1 block">Date</label>
+                <label className="text-xs text-gray-500 font-medium mb-1 block">日付</label>
                 <input 
                   type="date"
                   className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
@@ -1299,10 +1299,10 @@ const PruningTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => vo
             </div>
             
             <div>
-                <label className="text-xs text-gray-500 font-medium mb-1 block">Details / Notes</label>
+                <label className="text-xs text-gray-500 font-medium mb-1 block">詳細 / メモ</label>
                 <input 
                   type="text"
-                  placeholder="e.g., Summer pruning, Winter pruning..."
+                  placeholder="例：夏剪定、冬剪定、強剪定..."
                   className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
                   value={pruningDetails}
                   onChange={(e) => setPruningDetails(e.target.value)}
@@ -1311,7 +1311,7 @@ const PruningTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => vo
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                  <span className="text-xs font-bold text-gray-500 uppercase block text-center">Before</span>
+                  <span className="text-xs font-bold text-gray-500 uppercase block text-center">剪定前 (Before)</span>
                   {tempBefore ? (
                       <div className="relative aspect-square rounded-lg overflow-hidden border border-gray-200">
                           <img src={tempBefore} className="w-full h-full object-cover" alt="Before" />
@@ -1319,14 +1319,14 @@ const PruningTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => vo
                       </div>
                   ) : (
                       <PhotoUpload 
-                        label="Before Photo"
+                        label="Before写真"
                         icon="camera" 
                         onPhotoSelect={setTempBefore} 
                       />
                   )}
               </div>
               <div className="space-y-1">
-                  <span className="text-xs font-bold text-gray-500 uppercase block text-center">After</span>
+                  <span className="text-xs font-bold text-gray-500 uppercase block text-center">剪定後 (After)</span>
                   {tempAfter ? (
                       <div className="relative aspect-square rounded-lg overflow-hidden border border-gray-200">
                           <img src={tempAfter} className="w-full h-full object-cover" alt="After" />
@@ -1334,7 +1334,7 @@ const PruningTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => vo
                       </div>
                   ) : (
                       <PhotoUpload 
-                        label="After Photo" 
+                        label="After写真" 
                         icon="camera"
                         onPhotoSelect={setTempAfter} 
                       />
@@ -1347,15 +1347,15 @@ const PruningTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => vo
                 className="w-full mt-2"
                 disabled={!tempBefore && !tempAfter && !pruningDetails}
             >
-                <Save size={16} className="mr-2" /> Save Record
+                <Save size={16} className="mr-2" /> 記録を保存
             </Button>
         </div>
       </div>
 
       <div>
-        <SectionTitle icon={History} title="Pruning Archive" />
+        <SectionTitle icon={History} title="剪定アーカイブ" />
         <div className="grid grid-cols-2 gap-3 mt-2">
-          {pruningPhotos.length === 0 && <p className="col-span-2 text-sm text-gray-400 italic text-center py-4">No pruning photos recorded.</p>}
+          {pruningPhotos.length === 0 && <p className="col-span-2 text-sm text-gray-400 italic text-center py-4">剪定記録はまだありません。</p>}
           {pruningPhotos.map(photo => (
             <div key={photo.id} className="relative group rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm transition-all duration-300">
                {editingPhotoId === photo.id ? (
@@ -1369,13 +1369,13 @@ const PruningTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => vo
                        <input 
                            type="text"
                            className="w-full p-1 border border-gray-200 rounded text-xs"
-                           placeholder="Note"
+                           placeholder="メモ"
                            value={editForm.note}
                            onChange={(e) => setEditForm({...editForm, note: e.target.value})}
                        />
                        <div className="flex gap-1">
-                           <button onClick={saveEdit} className="flex-1 bg-emerald-100 text-emerald-800 text-xs py-1 rounded">Save</button>
-                           <button onClick={() => setEditingPhotoId(null)} className="flex-1 bg-gray-100 text-gray-800 text-xs py-1 rounded">Cancel</button>
+                           <button onClick={saveEdit} className="flex-1 bg-emerald-100 text-emerald-800 text-xs py-1 rounded">保存</button>
+                           <button onClick={() => setEditingPhotoId(null)} className="flex-1 bg-gray-100 text-gray-800 text-xs py-1 rounded">キャンセル</button>
                        </div>
                    </div>
                ) : (
@@ -1455,11 +1455,11 @@ const GalleryTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => vo
         <div className="space-y-6 pb-10">
             <div className="bg-gradient-to-br from-rose-50 to-white rounded-xl p-6 shadow-sm border border-rose-100 text-center">
                 <Flower2 size={32} className="mx-auto text-rose-400 mb-2" />
-                <h3 className="font-serif font-bold text-rose-900 mb-1">Bloom Log</h3>
-                <p className="text-xs text-rose-700 mb-4">Capture the perfect bloom moment.</p>
+                <h3 className="font-serif font-bold text-rose-900 mb-1">開花ログ</h3>
+                <p className="text-xs text-rose-700 mb-4">最高の一瞬を記録しましょう。</p>
                 <div className="max-w-[200px] mx-auto">
                     <PhotoUpload 
-                        label="Take Bloom Photo" 
+                        label="開花写真を撮影" 
                         icon="camera"
                         onPhotoSelect={handlePhotoUpload} 
                     />
@@ -1471,7 +1471,7 @@ const GalleryTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => vo
                     <div key={photo.id} className="relative rounded-xl overflow-hidden shadow-sm aspect-square bg-white border border-gray-100">
                          {editingPhotoId === photo.id ? (
                              <div className="absolute inset-0 bg-white/95 z-20 flex flex-col items-center justify-center p-4 gap-3 animate-fade-in">
-                                 <span className="text-xs font-bold text-gray-500">Edit Date</span>
+                                 <span className="text-xs font-bold text-gray-500">日付を編集</span>
                                  <input 
                                      type="date"
                                      className="w-full p-2 border border-gray-200 rounded text-sm bg-white"
@@ -1479,8 +1479,8 @@ const GalleryTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => vo
                                      onChange={(e) => setEditForm({ date: e.target.value })}
                                  />
                                  <div className="flex w-full gap-2">
-                                     <button onClick={saveEdit} className="flex-1 bg-emerald-600 text-white py-2 rounded-lg text-xs font-bold">Save</button>
-                                     <button onClick={() => setEditingPhotoId(null)} className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg text-xs font-bold">Cancel</button>
+                                     <button onClick={saveEdit} className="flex-1 bg-emerald-600 text-white py-2 rounded-lg text-xs font-bold">保存</button>
+                                     <button onClick={() => setEditingPhotoId(null)} className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg text-xs font-bold">キャンセル</button>
                                  </div>
                              </div>
                          ) : (
@@ -1513,7 +1513,7 @@ const GalleryTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => vo
             {bloomPhotos.length === 0 && (
                 <div className="text-center py-10 opacity-40">
                     <ImageIcon size={48} className="mx-auto mb-2" />
-                    <p className="text-sm">No blooms captured yet.</p>
+                    <p className="text-sm">開花写真はまだありません。</p>
                 </div>
             )}
         </div>
@@ -1582,7 +1582,7 @@ const MemoTab: React.FC<{ rose: RoseVariety; onAddNote: (n: RoseNote) => void; o
             <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="font-bold text-gray-800 text-sm flex items-center gap-2">
-                        <BookOpen size={16} className="text-emerald-800"/> New Entry
+                        <BookOpen size={16} className="text-emerald-800"/> 新規作成
                     </h3>
                     <input 
                         type="date"
@@ -1593,19 +1593,19 @@ const MemoTab: React.FC<{ rose: RoseVariety; onAddNote: (n: RoseNote) => void; o
                 </div>
                 <textarea 
                     className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm min-h-[100px] focus:ring-2 focus:ring-emerald-900 focus:outline-none mb-3"
-                    placeholder="Observation, growth status, ideas..."
+                    placeholder="観察記録、成長の様子、アイデア..."
                     value={noteContent}
                     onChange={(e) => setNoteContent(e.target.value)}
                 />
                 <Button onClick={handleAdd} disabled={!noteContent.trim()} className="w-full">
-                    Add Journal Entry
+                    日誌に追加
                 </Button>
             </div>
 
             {rose.memo && (
                 <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-100 relative">
                     <div className="flex items-center gap-2 mb-2 text-yellow-800 font-bold text-xs uppercase">
-                        <span>General Description (Legacy)</span>
+                        <span>基本情報（旧メモ）</span>
                     </div>
                     <textarea 
                         className="w-full bg-transparent border-none text-sm text-gray-700 focus:ring-0 p-0 resize-none"
@@ -1622,7 +1622,7 @@ const MemoTab: React.FC<{ rose: RoseVariety; onAddNote: (n: RoseNote) => void; o
                         {editingNoteId === note.id ? (
                             <div className="space-y-3 animate-fade-in">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-xs font-bold text-emerald-800 uppercase">Editing</span>
+                                    <span className="text-xs font-bold text-emerald-800 uppercase">編集</span>
                                     <input 
                                         type="date"
                                         className="p-1 text-xs border border-gray-200 rounded"
@@ -1638,10 +1638,10 @@ const MemoTab: React.FC<{ rose: RoseVariety; onAddNote: (n: RoseNote) => void; o
                                 />
                                 <div className="flex gap-2">
                                     <Button size="sm" onClick={saveEdit} className="flex-1 h-8 text-xs">
-                                        <CheckCircle2 size={14} className="mr-1"/> Save
+                                        <CheckCircle2 size={14} className="mr-1"/> 保存
                                     </Button>
                                     <Button size="sm" variant="secondary" onClick={() => setEditingNoteId(null)} className="flex-1 h-8 text-xs">
-                                        <X size={14} className="mr-1"/> Cancel
+                                        <X size={14} className="mr-1"/> キャンセル
                                     </Button>
                                 </div>
                             </div>
@@ -1655,14 +1655,14 @@ const MemoTab: React.FC<{ rose: RoseVariety; onAddNote: (n: RoseNote) => void; o
                                         <button 
                                             onClick={() => startEditing(note)}
                                             className="text-gray-300 hover:text-emerald-600 transition-colors p-1"
-                                            title="Edit Note"
+                                            title="編集"
                                         >
                                             <Pencil size={14} />
                                         </button>
                                         <button 
                                             onClick={() => onDeleteNote(note.id)}
                                             className="text-gray-300 hover:text-rose-500 transition-colors p-1"
-                                            title="Delete Note"
+                                            title="削除"
                                         >
                                             <Trash2 size={14} />
                                         </button>
@@ -1677,7 +1677,7 @@ const MemoTab: React.FC<{ rose: RoseVariety; onAddNote: (n: RoseNote) => void; o
                 ))}
                 {notes.length === 0 && !rose.memo && (
                     <div className="text-center py-8 text-gray-400 italic text-sm">
-                        No journal entries yet.
+                        日誌はまだありません。
                     </div>
                 )}
             </div>

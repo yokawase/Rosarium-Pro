@@ -24,14 +24,14 @@
         if (root && root.innerHTML === '') {
            document.body.innerHTML = `
              <div style="padding: 24px; color: #881337; font-family: system-ui, sans-serif; text-align: center; margin-top: 40px;">
-               <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 16px;">Application Error</h2>
-               <p style="margin-bottom: 24px; color: #4b5563;">The application failed to start correctly.</p>
+               <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 16px;">アプリケーションエラー</h2>
+               <p style="margin-bottom: 24px; color: #4b5563;">アプリの起動に失敗しました。</p>
                <div style="background: #fff1f2; padding: 16px; border-radius: 12px; overflow: auto; font-size: 11px; text-align: left; margin-bottom: 24px; border: 1px solid #fecdd3;">
                  ${e.message}
                </div>
                <button onclick="localStorage.removeItem('rosarium_roses'); window.location.reload();" 
                        style="padding: 12px 24px; background: #be123c; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                 Reset Data & Reload
+                 データをリセットして再読み込み
                </button>
              </div>
            `;
