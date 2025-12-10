@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, ReactNode } from 'react';
-import { Plus, ChevronLeft, Sprout, Calendar, Droplets, Scissors, Save, Camera, History, Leaf, Check, AlertCircle, Settings, Download, Upload, Bug, Flower2, Trash2, Image as ImageIcon, Shovel, X, BookOpen, ShieldAlert, Pencil, CheckCircle2, RotateCcw, Edit3 } from 'lucide-react';
+import { Plus, ChevronLeft, Sprout, Calendar, Droplets, Scissors, Save, History, Leaf, Check, AlertCircle, Settings, Download, Upload, Bug, Flower2, Trash2, Image as ImageIcon, Shovel, X, BookOpen, ShieldAlert, Pencil, CheckCircle2, Edit3 } from 'lucide-react';
 import { BREEDERS, FERTILIZERS, ISSUES, ROSE_LIBRARY, TRANSPLANT_TYPES, SOIL_TYPES } from './constants';
 import { RoseVariety, ViewState, RoseEvent, RosePhoto, FertilizerType, RoseNote } from './types';
 import { Button } from './components/Button';
@@ -972,7 +972,7 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
                 </div>
                 
                 <div className="space-y-2">
-                    {soilMix.map((mix, index) => (
+                    {soilMix.map((mix) => (
                         <div key={mix.id} className="flex gap-2 items-start animate-fade-in">
                             <div className="flex-1 space-y-1">
                                 <select
