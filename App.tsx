@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef, ReactNode } from 'react';
-import { Plus, ChevronLeft, Sprout, Calendar, Droplets, Scissors, Save, History, Leaf, Check, AlertCircle, Settings, Download, Upload, Bug, Flower2, Trash2, Image as ImageIcon, Shovel, X, BookOpen, ShieldAlert, Pencil, CheckCircle2, Edit3 } from 'lucide-react';
-import { BREEDERS, FERTILIZERS, ISSUES, ROSE_LIBRARY, TRANSPLANT_TYPES, SOIL_TYPES } from './constants';
+import { Plus, ChevronLeft, Sprout, Calendar, Droplets, Scissors, Save, History, Leaf, Check, AlertCircle, Settings, Download, Upload, Bug, Flower2, Trash2, Image as ImageIcon, Shovel, X, BookOpen, ShieldAlert, Pencil, CheckCircle2, Edit3, FlaskConical, Search } from 'lucide-react';
+import { BREEDERS, FERTILIZERS, ISSUES, ROSE_LIBRARY, TRANSPLANT_TYPES, SOIL_TYPES, CHEMICALS } from './constants';
 import { RoseVariety, ViewState, RoseEvent, RosePhoto, FertilizerType, RoseNote } from './types';
 import { Button } from './components/Button';
 import { PhotoUpload } from './components/PhotoUpload';
@@ -130,6 +130,45 @@ const EditVarietyModal: React.FC<{
       </div>
     </div>
   );
+};
+
+const ChemicalSelectorModal: React.FC<{
+    onSelect: (chemicalName: string) => void;
+    onClose: () => void;
+}> = ({ onSelect, onClose }) => {
+    return (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+            <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full max-h-[80vh] overflow-hidden flex flex-col">
+                <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                    <h3 className="font-bold text-gray-800 flex items-center gap-2">
+                        <FlaskConical size={18} className="text-emerald-600"/>
+                        薬剤を選択
+                    </h3>
+                    <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600 rounded-full">
+                        <X size={20}/>
+                    </button>
+                </div>
+                <div className="overflow-y-auto p-4 space-y-4">
+                    {CHEMICALS.map((category) => (
+                        <div key={category.category}>
+                            <h4 className="text-xs font-bold text-gray-500 uppercase mb-2">{category.category}</h4>
+                            <div className="space-y-1">
+                                {category.items.map((item) => (
+                                    <button
+                                        key={item}
+                                        onClick={() => onSelect(item)}
+                                        className="w-full text-left px-3 py-2 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-900 transition-colors"
+                                    >
+                                        {item}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
 };
 
 // --- Main App Component ---
@@ -403,8 +442,6 @@ export default function App() {
   );
 }
 
-// ... (SettingsScreen and NewRoseScreen remain unchanged)
-
 const SettingsScreen: React.FC<{ 
   roses: RoseVariety[]; 
   onImport: (data: RoseVariety[]) => void;
@@ -612,7 +649,7 @@ const RoseDetailScreen: React.FC<{
   onBack: () => void;
   saveStatus: 'idle' | 'saving' | 'saved' | 'error';
 }> = ({ rose, onUpdate, onEdit, onDelete, onBack, saveStatus }) => {
-  const [activeTab, setActiveTab] = useState<'CARE' | 'PRUNING' | 'GALLERY' | 'MEMO'>('CARE');
+  const [activeTab, setActiveTab] = useState<'CARE' | 'GALLERY' | 'MEMO'>('CARE');
 
   const updateField = (field: keyof RoseVariety, value: any) => {
     onUpdate({ ...rose, [field]: value });
@@ -698,7 +735,6 @@ const RoseDetailScreen: React.FC<{
           <div className="flex min-w-full">
             {[
               { id: 'CARE', label: 'お世話', icon: Droplets },
-              { id: 'PRUNING', label: '剪定', icon: Scissors },
               { id: 'GALLERY', label: '開花', icon: Flower2 },
               { id: 'MEMO', label: '日誌', icon: BookOpen },
             ].map(tab => (
@@ -720,8 +756,7 @@ const RoseDetailScreen: React.FC<{
       </div>
 
       <main className="flex-1 overflow-y-auto p-4 pb-32 overscroll-contain">
-        {activeTab === 'CARE' && <CareTab rose={rose} onUpdate={onUpdate} onAddEvent={addEvent} onDelete={onDelete} />}
-        {activeTab === 'PRUNING' && <PruningTab rose={rose} onAddPhoto={addPhoto} onAddEvent={addEvent} onDeletePhoto={deletePhoto} onUpdatePhoto={updatePhoto} />}
+        {activeTab === 'CARE' && <CareTab rose={rose} onUpdate={onUpdate} onAddEvent={addEvent} onDelete={onDelete} onAddPhoto={addPhoto} />}
         {activeTab === 'GALLERY' && <GalleryTab rose={rose} onAddPhoto={addPhoto} onDeletePhoto={deletePhoto} onUpdatePhoto={updatePhoto} />}
         {activeTab === 'MEMO' && <MemoTab rose={rose} onAddNote={addNote} onDeleteNote={deleteNote} onUpdateNote={updateNote} onUpdateLegacyMemo={(val) => updateField('memo', val)} />}
       </main>
@@ -731,7 +766,7 @@ const RoseDetailScreen: React.FC<{
 
 // --- Tabs Logic ---
 
-const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void; onAddEvent: (e: RoseEvent) => void; onDelete?: () => void }> = ({ rose, onUpdate, onAddEvent, onDelete }) => {
+const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void; onAddEvent: (e: RoseEvent) => void; onDelete?: () => void; onAddPhoto: (p: RosePhoto) => void }> = ({ rose, onUpdate, onAddEvent, onDelete, onAddPhoto }) => {
   const [fertilizerType, setFertilizerType] = useState<FertilizerType>('VITALIZER');
   const [fertilizerDate, setFertilizerDate] = useState(new Date().toISOString().split('T')[0]);
   
@@ -740,11 +775,21 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
   const [potSize, setPotSize] = useState('');
   
   const [healthDate, setHealthDate] = useState(new Date().toISOString().split('T')[0]);
+  const [showChemicalModal, setShowChemicalModal] = useState(false);
   
+  // Pruning State (Moved from PruningTab)
+  const [pruningDate, setPruningDate] = useState(new Date().toISOString().split('T')[0]);
+  const [pruningDetails, setPruningDetails] = useState('');
+  const [tempBefore, setTempBefore] = useState<string | null>(null);
+  const [tempAfter, setTempAfter] = useState<string | null>(null);
+
   // History Editing State
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ date: '', details: '' });
   
+  // Search State
+  const [searchQuery, setSearchQuery] = useState('');
+
   interface SoilComponent { id: string; type: string; percent: number; customName?: string }
   const [soilMix, setSoilMix] = useState<SoilComponent[]>([{ id: '1', type: SOIL_TYPES[0].value, percent: 100 }]);
 
@@ -768,7 +813,6 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
         let newList = prev.map(c => c.id === id ? { ...c, [field]: value } : c);
         
         // Auto-balance logic: ONLY apply if there are exactly 2 components. 
-        // If 3+, we don't know which one to adjust, so let user do it manually.
         if (prev.length === 2 && field === 'percent') {
             const newValue = parseInt(value) || 0;
             if (newValue <= 100) {
@@ -836,6 +880,11 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
   };
 
   const handleAddIssue = (issue: { label: string, type: string }) => {
+    if (issue.label === '薬剤散布') {
+        setShowChemicalModal(true);
+        return;
+    }
+
     const [year, month, day] = healthDate.split('-').map(Number);
     const date = new Date(year, month - 1, day);
     const now = new Date();
@@ -850,6 +899,69 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
         details: issue.label
     });
   }
+
+  const handleSelectChemical = (chemicalName: string) => {
+    const [year, month, day] = healthDate.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    const now = new Date();
+    if (now.getFullYear() === year && now.getMonth() === month - 1 && now.getDate() === day) {
+      date.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+    }
+
+    onAddEvent({
+        id: crypto.randomUUID(),
+        type: 'PEST_CONTROL',
+        date: date.toISOString(),
+        details: `薬剤散布: ${chemicalName}`
+    });
+    setShowChemicalModal(false);
+  }
+
+  const handleSavePruning = () => {
+    // 1. Create Event
+    const [year, month, day] = pruningDate.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    const now = new Date();
+    if (now.getFullYear() === year && now.getMonth() === month - 1 && now.getDate() === day) {
+      date.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+    }
+    const isoDate = date.toISOString();
+
+    const detailText = pruningDetails.trim() || '剪定作業';
+    
+    onAddEvent({
+        id: crypto.randomUUID(),
+        type: 'PRUNING',
+        date: isoDate,
+        details: detailText
+    });
+
+    // 2. Save Photos if present
+    if (tempBefore) {
+        onAddPhoto({
+            id: crypto.randomUUID(),
+            url: tempBefore,
+            date: isoDate,
+            type: 'PRUNING_BEFORE',
+            note: detailText
+        });
+    }
+
+    if (tempAfter) {
+        onAddPhoto({
+            id: crypto.randomUUID(),
+            url: tempAfter,
+            date: isoDate,
+            type: 'PRUNING_AFTER',
+            note: detailText
+        });
+    }
+
+    // 3. Reset Form
+    setPruningDetails('');
+    setTempBefore(null);
+    setTempAfter(null);
+  };
 
   const handlePlantingDateChange = (date: string) => {
     onUpdate({ ...rose, plantingDate: date });
@@ -899,8 +1011,37 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
       }
   }
 
+  // Helper to find photos for an event
+  const getEventPhotos = (event: RoseEvent) => {
+      if (event.type !== 'PRUNING') return [];
+      // Match photos by approx timestamp (within same minute) or exact date string match if possible
+      // Simplest: Match YYYY-MM-DD
+      const eventDay = event.date.split('T')[0];
+      return rose.photos.filter(p => 
+          p.date.startsWith(eventDay) && 
+          (p.type === 'PRUNING_BEFORE' || p.type === 'PRUNING_AFTER')
+      );
+  };
+
+  // Filter events based on search query
+  const filteredEvents = useMemo(() => {
+    if (!searchQuery.trim()) return rose.events;
+    const lowerQuery = searchQuery.toLowerCase();
+    return rose.events.filter(event => 
+      event.details.toLowerCase().includes(lowerQuery) ||
+      new Date(event.date).toLocaleDateString().includes(lowerQuery)
+    );
+  }, [rose.events, searchQuery]);
+
   return (
     <div className="space-y-6 pb-10">
+      {showChemicalModal && (
+          <ChemicalSelectorModal 
+              onSelect={handleSelectChemical} 
+              onClose={() => setShowChemicalModal(false)} 
+          />
+      )}
+
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
         <SectionTitle icon={Calendar} title="マイルストーン" />
         <div className="grid grid-cols-2 gap-4">
@@ -1076,216 +1217,7 @@ const CareTab: React.FC<{ rose: RoseVariety; onUpdate: (r: RoseVariety) => void;
       </div>
 
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-        <SectionTitle icon={Bug} title="ドクターローズ (健康診断)" color="text-rose-900" />
-        
-        <div className="mb-3">
-            <label className="text-xs text-gray-500 font-medium mb-1 block">観察日</label>
-            <input 
-              type="date"
-              className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
-              value={healthDate}
-              onChange={(e) => setHealthDate(e.target.value)}
-            />
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-            {ISSUES.map(issue => (
-                <button
-                    key={issue.label}
-                    onClick={() => handleAddIssue(issue)}
-                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                        issue.type === 'PREVENTION' 
-                        ? 'border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100'
-                        : issue.type === 'PEST'
-                        ? 'border-orange-200 bg-orange-50 text-orange-800 hover:bg-orange-100'
-                        : 'border-rose-200 bg-rose-50 text-rose-800 hover:bg-rose-100'
-                    }`}
-                >
-                    {issue.label}
-                </button>
-            ))}
-        </div>
-      </div>
-
-      <div>
-        <SectionTitle icon={History} title="履歴" />
-        <div className="space-y-3 mt-2">
-          {rose.events.length === 0 && <p className="text-sm text-gray-400 italic">履歴はまだありません。</p>}
-          {rose.events.map(event => (
-            <div key={event.id} className="flex gap-3 bg-white p-3 rounded-lg border border-gray-100 shadow-sm items-start group">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                event.type === 'FERTILIZER' ? 'bg-blue-50 text-blue-600' :
-                event.type === 'PRUNING' ? 'bg-rose-50 text-rose-600' :
-                event.type === 'PEST_CONTROL' ? 'bg-orange-50 text-orange-600' :
-                event.type === 'TRANSPLANT' ? 'bg-amber-50 text-amber-700' :
-                'bg-gray-100 text-gray-600'
-              }`}>
-                {event.type === 'FERTILIZER' ? <Droplets size={18} /> : 
-                 event.type === 'PRUNING' ? <Scissors size={18} /> : 
-                 event.type === 'PEST_CONTROL' ? <Bug size={18} /> :
-                 event.type === 'TRANSPLANT' ? <Shovel size={18} /> :
-                 <Leaf size={18} />}
-              </div>
-              
-              {editingEventId === event.id ? (
-                  <div className="flex-1 space-y-2 animate-fade-in">
-                      <div className="flex justify-between items-center">
-                          <label className="text-xs font-bold text-gray-500 uppercase">イベント編集</label>
-                          <button onClick={deleteEvent} className="text-xs text-rose-600 bg-rose-50 px-2 py-1 rounded hover:bg-rose-100 flex items-center gap-1">
-                             <Trash2 size={12} /> 削除
-                          </button>
-                      </div>
-                      <input 
-                        type="datetime-local"
-                        className="w-full p-2 border border-gray-200 rounded text-sm focus:ring-2 focus:ring-emerald-900 focus:outline-none"
-                        value={editForm.date}
-                        onChange={e => setEditForm({...editForm, date: e.target.value})}
-                      />
-                      <input 
-                        type="text"
-                        className="w-full p-2 border border-gray-200 rounded text-sm focus:ring-2 focus:ring-emerald-900 focus:outline-none"
-                        value={editForm.details}
-                        onChange={e => setEditForm({...editForm, details: e.target.value})}
-                        placeholder="詳細"
-                      />
-                      <div className="flex gap-2 mt-2">
-                          <Button size="sm" onClick={saveEditedEvent} className="py-1 h-8 text-xs flex-1">
-                             <Check size={14} className="mr-1"/> 保存
-                          </Button>
-                          <Button size="sm" variant="secondary" onClick={() => setEditingEventId(null)} className="py-1 h-8 text-xs flex-1">
-                             <X size={14} className="mr-1"/> キャンセル
-                          </Button>
-                      </div>
-                  </div>
-              ) : (
-                  <div className="flex-1 relative pr-8">
-                    <p className="text-xs text-gray-400">{new Date(event.date).toLocaleDateString()} {new Date(event.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                    <p className="text-sm font-medium text-gray-800 whitespace-pre-wrap">{event.details}</p>
-                    
-                    <button 
-                        onClick={() => startEditingEvent(event)} 
-                        className="absolute top-0 right-0 p-1.5 text-gray-300 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-all"
-                        title="イベントを編集"
-                    >
-                        <Pencil size={14} />
-                    </button>
-                  </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      {/* Danger Zone */}
-      <div className="mt-8 pt-6 border-t border-gray-200 pb-10">
-        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">管理</h3>
-        <button 
-            onClick={() => {
-                if (onDelete) onDelete();
-            }}
-            className="w-full py-3 bg-gray-50 text-gray-500 rounded-xl border border-gray-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-colors flex items-center justify-center gap-2 font-medium"
-        >
-            <Trash2 size={16} /> 品種を削除
-        </button>
-      </div>
-    </div>
-  );
-};
-
-const PruningTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => void; onAddEvent: (e: RoseEvent) => void; onDeletePhoto: (id: string) => void; onUpdatePhoto: (p: RosePhoto) => void }> = ({ rose, onAddPhoto, onAddEvent, onDeletePhoto, onUpdatePhoto }) => {
-  const [pruningDate, setPruningDate] = useState(new Date().toISOString().split('T')[0]);
-  const [pruningDetails, setPruningDetails] = useState('');
-  const [tempBefore, setTempBefore] = useState<string | null>(null);
-  const [tempAfter, setTempAfter] = useState<string | null>(null);
-  
-  const [editingPhotoId, setEditingPhotoId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState({ date: '', note: '' });
-
-  const handleSavePruning = () => {
-    // 1. Create Event
-    const [year, month, day] = pruningDate.split('-').map(Number);
-    const date = new Date(year, month - 1, day);
-    const now = new Date();
-    if (now.getFullYear() === year && now.getMonth() === month - 1 && now.getDate() === day) {
-      date.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
-    }
-    const isoDate = date.toISOString();
-
-    const detailText = pruningDetails.trim() || '剪定作業';
-    
-    onAddEvent({
-        id: crypto.randomUUID(),
-        type: 'PRUNING',
-        date: isoDate,
-        details: detailText
-    });
-
-    // 2. Save Photos if present
-    if (tempBefore) {
-        onAddPhoto({
-            id: crypto.randomUUID(),
-            url: tempBefore,
-            date: isoDate,
-            type: 'PRUNING_BEFORE',
-            note: detailText
-        });
-    }
-
-    if (tempAfter) {
-        onAddPhoto({
-            id: crypto.randomUUID(),
-            url: tempAfter,
-            date: isoDate,
-            type: 'PRUNING_AFTER',
-            note: detailText
-        });
-    }
-
-    // 3. Reset Form
-    setPruningDetails('');
-    setTempBefore(null);
-    setTempAfter(null);
-  };
-
-  const startEditing = (photo: RosePhoto) => {
-      setEditingPhotoId(photo.id);
-      setEditForm({
-          date: photo.date.split('T')[0],
-          note: photo.note || ''
-      });
-  }
-  
-  const saveEdit = () => {
-      if (!editingPhotoId) return;
-      const original = rose.photos.find(p => p.id === editingPhotoId);
-      if (!original) return;
-      
-      const [year, month, day] = editForm.date.split('-').map(Number);
-      const date = new Date(year, month - 1, day);
-      // Preserve original time
-      const originalDate = new Date(original.date);
-      date.setHours(originalDate.getHours(), originalDate.getMinutes(), originalDate.getSeconds());
-
-      onUpdatePhoto({
-          ...original,
-          date: date.toISOString(),
-          note: editForm.note
-      });
-      setEditingPhotoId(null);
-  }
-
-  const pruningPhotos = useMemo(() => 
-    rose.photos.filter(p => p.type === 'PRUNING_BEFORE' || p.type === 'PRUNING_AFTER')
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  , [rose.photos]);
-
-  return (
-    <div className="space-y-6 pb-10">
-      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-2 mb-4 text-rose-900 font-bold border-b border-rose-100 pb-2">
-            <Scissors size={18} />
-            <h3>新しい剪定記録</h3>
-        </div>
+        <SectionTitle icon={Scissors} title="剪定・誘引" color="text-rose-900"/>
         
         <div className="space-y-4">
             <div>
@@ -1352,335 +1284,293 @@ const PruningTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => vo
         </div>
       </div>
 
+      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+        <SectionTitle icon={Bug} title="ドクターローズ (健康診断)" color="text-rose-900" />
+        
+        <div className="mb-3">
+            <label className="text-xs text-gray-500 font-medium mb-1 block">観察日</label>
+            <input 
+              type="date"
+              className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+              value={healthDate}
+              onChange={(e) => setHealthDate(e.target.value)}
+            />
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+            {ISSUES.map(issue => (
+                <button
+                    key={issue.label}
+                    onClick={() => handleAddIssue(issue)}
+                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                        issue.type === 'PREVENTION' 
+                        ? 'border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100'
+                        : issue.type === 'PEST'
+                        ? 'border-orange-200 bg-orange-50 text-orange-800 hover:bg-orange-100'
+                        : 'border-rose-200 bg-rose-50 text-rose-800 hover:bg-rose-100'
+                    }`}
+                >
+                    {issue.label}
+                </button>
+            ))}
+        </div>
+      </div>
+
       <div>
-        <SectionTitle icon={History} title="剪定アーカイブ" />
-        <div className="grid grid-cols-2 gap-3 mt-2">
-          {pruningPhotos.length === 0 && <p className="col-span-2 text-sm text-gray-400 italic text-center py-4">剪定記録はまだありません。</p>}
-          {pruningPhotos.map(photo => (
-            <div key={photo.id} className="relative group rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm transition-all duration-300">
-               {editingPhotoId === photo.id ? (
-                   <div className="absolute inset-0 bg-white z-10 p-2 flex flex-col justify-center gap-2">
-                       <input 
-                           type="date"
-                           className="w-full p-1 border border-gray-200 rounded text-xs"
-                           value={editForm.date}
-                           onChange={(e) => setEditForm({...editForm, date: e.target.value})}
-                       />
-                       <input 
-                           type="text"
-                           className="w-full p-1 border border-gray-200 rounded text-xs"
-                           placeholder="メモ"
-                           value={editForm.note}
-                           onChange={(e) => setEditForm({...editForm, note: e.target.value})}
-                       />
-                       <div className="flex gap-1">
-                           <button onClick={saveEdit} className="flex-1 bg-emerald-100 text-emerald-800 text-xs py-1 rounded">保存</button>
-                           <button onClick={() => setEditingPhotoId(null)} className="flex-1 bg-gray-100 text-gray-800 text-xs py-1 rounded">キャンセル</button>
-                       </div>
-                   </div>
-               ) : (
-                 <>
-                  <img src={photo.url} alt="Pruning" className="w-full h-32 object-cover" />
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-1.5 backdrop-blur-sm flex justify-between items-center">
-                    <div>
-                        <p className="text-[10px] font-bold text-white uppercase tracking-wider">
-                        {photo.type === 'PRUNING_BEFORE' ? 'Before' : 'After'}
-                        </p>
-                        <p className="text-[10px] text-gray-300">
-                        {new Date(photo.date).toLocaleDateString()}
-                        </p>
-                    </div>
-                    <div className="flex gap-1">
-                        <button onClick={() => startEditing(photo)} className="text-white/80 hover:text-emerald-400 p-1">
-                            <Pencil size={12} />
-                        </button>
-                        <button onClick={() => onDeletePhoto(photo.id)} className="text-white/80 hover:text-rose-400 p-1">
-                            <Trash2 size={12} />
-                        </button>
-                    </div>
+        <div className="flex items-center justify-between">
+            <SectionTitle icon={History} title="履歴" />
+        </div>
+        <div className="mb-3 relative">
+            <input 
+                type="text"
+                placeholder="履歴を検索 (例: 肥料, 2024)..."
+                className="w-full p-2 pl-9 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-900 focus:outline-none"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Search size={16} className="absolute left-3 top-2.5 text-gray-400" />
+        </div>
+
+        <div className="space-y-3 mt-2">
+          {filteredEvents.length === 0 && (
+              <p className="text-sm text-gray-400 italic">
+                  {searchQuery ? "一致する履歴が見つかりません。" : "履歴はまだありません。"}
+              </p>
+          )}
+          {filteredEvents.map(event => {
+            const eventPhotos = getEventPhotos(event);
+            
+            return (
+            <div key={event.id} className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm group">
+              <div className="flex gap-3 items-start">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+                    event.type === 'FERTILIZER' ? 'bg-blue-50 text-blue-600' :
+                    event.type === 'PRUNING' ? 'bg-rose-50 text-rose-600' :
+                    event.type === 'PEST_CONTROL' ? 'bg-orange-50 text-orange-600' :
+                    event.type === 'TRANSPLANT' ? 'bg-amber-50 text-amber-700' :
+                    'bg-gray-100 text-gray-600'
+                  }`}>
+                    {event.type === 'FERTILIZER' ? <Droplets size={18} /> : 
+                     event.type === 'PRUNING' ? <Scissors size={18} /> : 
+                     event.type === 'PEST_CONTROL' ? <Bug size={18} /> :
+                     event.type === 'TRANSPLANT' ? <Shovel size={18} /> :
+                     <Leaf size={18} />}
                   </div>
-                 </>
-               )}
+                  
+                  {editingEventId === event.id ? (
+                      <div className="flex-1 space-y-2 animate-fade-in">
+                          <div className="flex justify-between items-center">
+                              <label className="text-xs font-bold text-gray-500 uppercase">イベント編集</label>
+                              <button onClick={deleteEvent} className="text-xs text-rose-600 bg-rose-50 px-2 py-1 rounded hover:bg-rose-100 flex items-center gap-1">
+                                 <Trash2 size={12} /> 削除
+                              </button>
+                          </div>
+                          <input 
+                            type="datetime-local"
+                            className="w-full p-2 border border-gray-200 rounded text-sm focus:ring-2 focus:ring-emerald-900 focus:outline-none"
+                            value={editForm.date}
+                            onChange={e => setEditForm({...editForm, date: e.target.value})}
+                          />
+                          <input 
+                            type="text"
+                            className="w-full p-2 border border-gray-200 rounded text-sm focus:ring-2 focus:ring-emerald-900 focus:outline-none"
+                            value={editForm.details}
+                            onChange={e => setEditForm({...editForm, details: e.target.value})}
+                            placeholder="詳細"
+                          />
+                          <div className="flex gap-2 mt-2">
+                              <Button size="sm" onClick={saveEditedEvent} className="py-1 h-8 text-xs flex-1">
+                                 <Check size={14} className="mr-1"/> 保存
+                              </Button>
+                              <Button size="sm" variant="secondary" onClick={() => setEditingEventId(null)} className="py-1 h-8 text-xs flex-1">
+                                 <X size={14} className="mr-1"/> キャンセル
+                              </Button>
+                          </div>
+                      </div>
+                  ) : (
+                      <div className="flex-1 relative pr-8">
+                        <p className="text-xs text-gray-400">{new Date(event.date).toLocaleDateString()} {new Date(event.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                        <p className="text-sm font-medium text-gray-800 whitespace-pre-wrap">{event.details}</p>
+                        
+                        {eventPhotos.length > 0 && (
+                            <div className="flex gap-2 mt-2">
+                                {eventPhotos.map(p => (
+                                    <div key={p.id} className="relative w-16 h-16 rounded overflow-hidden border border-gray-200">
+                                        <img src={p.url} className="w-full h-full object-cover" alt="Pruning" />
+                                        <div className="absolute bottom-0 inset-x-0 bg-black/50 text-[8px] text-white text-center py-0.5">
+                                            {p.type === 'PRUNING_BEFORE' ? 'Before' : 'After'}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        <button 
+                            onClick={() => startEditingEvent(event)} 
+                            className="absolute top-0 right-0 p-1.5 text-gray-300 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-all"
+                            title="イベントを編集"
+                        >
+                            <Pencil size={14} />
+                        </button>
+                      </div>
+                  )}
+              </div>
             </div>
-          ))}
+          )})}
+        </div>
+      </div>
+      
+      {/* Danger Zone */}
+      <div className="mt-8 pt-6 border-t border-gray-200 pb-10">
+        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">管理</h3>
+        <button 
+            onClick={() => {
+                if (onDelete) onDelete();
+            }}
+            className="w-full py-3 bg-gray-50 text-gray-500 rounded-xl border border-gray-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-colors flex items-center justify-center gap-2 font-medium"
+        >
+            <Trash2 size={16} /> 品種を削除
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const GalleryTab: React.FC<{ 
+  rose: RoseVariety; 
+  onAddPhoto: (p: RosePhoto) => void; 
+  onDeletePhoto: (id: string) => void;
+  onUpdatePhoto: (p: RosePhoto) => void; 
+}> = ({ rose, onAddPhoto, onDeletePhoto, onUpdatePhoto }) => {
+  // Sort photos by date desc
+  const photos = [...rose.photos].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <SectionTitle icon={ImageIcon} title="アルバム" />
+        <div className="mb-4">
+             <PhotoUpload 
+                label="写真を追加" 
+                icon="upload"
+                onPhotoSelect={(base64) => {
+                    onAddPhoto({
+                        id: crypto.randomUUID(),
+                        url: base64,
+                        date: new Date().toISOString(),
+                        type: 'GENERAL',
+                        note: ''
+                    });
+                }} 
+            />
+        </div>
+        
+        <div className="grid grid-cols-2 gap-3">
+            {photos.length === 0 && <p className="col-span-2 text-center text-sm text-gray-400 py-8">写真がありません</p>}
+            {photos.map(photo => (
+                <div key={photo.id} className="relative group rounded-lg overflow-hidden border border-gray-200 bg-gray-50 aspect-square">
+                    <img src={photo.url} alt="Rose" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2">
+                        <p className="text-[10px] text-white/80">{new Date(photo.date).toLocaleDateString()}</p>
+                        <div className="flex gap-2 justify-end mt-1">
+                            <button 
+                                onClick={() => {
+                                    const type = photo.type === 'BLOOM' ? 'GENERAL' : 'BLOOM';
+                                    onUpdatePhoto({ ...photo, type });
+                                }}
+                                className={`p-1 rounded bg-white/20 hover:bg-white/40 text-white ${photo.type === 'BLOOM' ? 'text-rose-300' : ''}`}
+                                title={photo.type === 'BLOOM' ? "開花写真として設定中" : "開花写真に設定"}
+                            >
+                                <Flower2 size={14} />
+                            </button>
+                            <button 
+                                onClick={() => onDeletePhoto(photo.id)}
+                                className="p-1 rounded bg-white/20 hover:bg-rose-500/80 text-white"
+                            >
+                                <Trash2 size={14} />
+                            </button>
+                        </div>
+                    </div>
+                    {photo.type === 'BLOOM' && (
+                        <div className="absolute top-2 left-2 bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm">
+                            BLOOM
+                        </div>
+                    )}
+                </div>
+            ))}
         </div>
       </div>
     </div>
   );
 };
 
-const GalleryTab: React.FC<{ rose: RoseVariety; onAddPhoto: (p: RosePhoto) => void; onDeletePhoto: (id: string) => void; onUpdatePhoto: (p: RosePhoto) => void }> = ({ rose, onAddPhoto, onDeletePhoto, onUpdatePhoto }) => {
-    const [editingPhotoId, setEditingPhotoId] = useState<string | null>(null);
-    const [editForm, setEditForm] = useState({ date: '' });
+const MemoTab: React.FC<{ 
+  rose: RoseVariety; 
+  onAddNote: (n: RoseNote) => void; 
+  onDeleteNote: (id: string) => void;
+  onUpdateNote: (n: RoseNote) => void;
+  onUpdateLegacyMemo: (val: string) => void;
+}> = ({ rose, onAddNote, onDeleteNote, onUpdateNote, onUpdateLegacyMemo }) => {
+  const [newNote, setNewNote] = useState('');
+  
+  return (
+    <div className="space-y-6">
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <SectionTitle icon={BookOpen} title="品種メモ" />
+        <textarea 
+            className="w-full h-32 p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-900 focus:outline-none resize-none"
+            placeholder="この品種の特徴や育て方のコツなどを自由にメモできます。"
+            value={rose.memo}
+            onChange={(e) => onUpdateLegacyMemo(e.target.value)}
+        />
+      </div>
 
-    const handlePhotoUpload = (base64: string) => {
-        onAddPhoto({
-          id: crypto.randomUUID(),
-          url: base64,
-          date: new Date().toISOString(),
-          type: 'BLOOM',
-        });
-    };
-
-    const startEditing = (photo: RosePhoto) => {
-        setEditingPhotoId(photo.id);
-        setEditForm({
-            date: photo.date.split('T')[0]
-        });
-    }
-
-    const saveEdit = () => {
-        if (!editingPhotoId) return;
-        const original = rose.photos.find(p => p.id === editingPhotoId);
-        if (!original) return;
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <SectionTitle icon={Edit3} title="栽培日誌" />
         
-        const [year, month, day] = editForm.date.split('-').map(Number);
-        const date = new Date(year, month - 1, day);
-        const originalDate = new Date(original.date);
-        date.setHours(originalDate.getHours(), originalDate.getMinutes(), originalDate.getSeconds());
+        <div className="mb-4 space-y-2">
+            <textarea 
+                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-900 focus:outline-none resize-none"
+                rows={3}
+                placeholder="今日の日記を書く..."
+                value={newNote}
+                onChange={(e) => setNewNote(e.target.value)}
+            />
+            <Button 
+                onClick={() => {
+                    if (!newNote.trim()) return;
+                    onAddNote({
+                        id: crypto.randomUUID(),
+                        date: new Date().toISOString(),
+                        content: newNote
+                    });
+                    setNewNote('');
+                }}
+                disabled={!newNote.trim()}
+                className="w-full"
+            >
+                日誌を追加
+            </Button>
+        </div>
 
-        onUpdatePhoto({
-            ...original,
-            date: date.toISOString()
-        });
-        setEditingPhotoId(null);
-    }
-
-    const bloomPhotos = useMemo(() => 
-        rose.photos.filter(p => p.type === 'BLOOM')
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    , [rose.photos]);
-
-    return (
-        <div className="space-y-6 pb-10">
-            <div className="bg-gradient-to-br from-rose-50 to-white rounded-xl p-6 shadow-sm border border-rose-100 text-center">
-                <Flower2 size={32} className="mx-auto text-rose-400 mb-2" />
-                <h3 className="font-serif font-bold text-rose-900 mb-1">開花ログ</h3>
-                <p className="text-xs text-rose-700 mb-4">最高の一瞬を記録しましょう。</p>
-                <div className="max-w-[200px] mx-auto">
-                    <PhotoUpload 
-                        label="開花写真を撮影" 
-                        icon="camera"
-                        onPhotoSelect={handlePhotoUpload} 
-                    />
+        <div className="space-y-3">
+            {[...(rose.notes || [])].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(note => (
+                <div key={note.id} className="p-3 bg-gray-50 rounded-lg border border-gray-200 relative group">
+                    <p className="text-xs text-gray-400 mb-1">{new Date(note.date).toLocaleDateString()} {new Date(note.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                    <p className="text-sm text-gray-800 whitespace-pre-wrap">{note.content}</p>
+                    <button 
+                        onClick={() => onDeleteNote(note.id)}
+                        className="absolute top-2 right-2 text-gray-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                        <Trash2 size={14} />
+                    </button>
                 </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-                {bloomPhotos.map(photo => (
-                    <div key={photo.id} className="relative rounded-xl overflow-hidden shadow-sm aspect-square bg-white border border-gray-100">
-                         {editingPhotoId === photo.id ? (
-                             <div className="absolute inset-0 bg-white/95 z-20 flex flex-col items-center justify-center p-4 gap-3 animate-fade-in">
-                                 <span className="text-xs font-bold text-gray-500">日付を編集</span>
-                                 <input 
-                                     type="date"
-                                     className="w-full p-2 border border-gray-200 rounded text-sm bg-white"
-                                     value={editForm.date}
-                                     onChange={(e) => setEditForm({ date: e.target.value })}
-                                 />
-                                 <div className="flex w-full gap-2">
-                                     <button onClick={saveEdit} className="flex-1 bg-emerald-600 text-white py-2 rounded-lg text-xs font-bold">保存</button>
-                                     <button onClick={() => setEditingPhotoId(null)} className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg text-xs font-bold">キャンセル</button>
-                                 </div>
-                             </div>
-                         ) : (
-                             <>
-                                 <img src={photo.url} alt="Bloom" className="w-full h-full object-cover" />
-                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity flex flex-col justify-end p-2">
-                                     <div className="flex justify-between items-end">
-                                        <span className="text-white text-xs font-medium">{new Date(photo.date).toLocaleDateString()}</span>
-                                        <div className="flex gap-1">
-                                            <button 
-                                                onClick={() => startEditing(photo)}
-                                                className="bg-white/20 p-1.5 rounded-full text-white hover:bg-emerald-600 transition-colors backdrop-blur-md"
-                                            >
-                                                <Pencil size={14} />
-                                            </button>
-                                            <button 
-                                                onClick={() => onDeletePhoto(photo.id)}
-                                                className="bg-white/20 p-1.5 rounded-full text-white hover:bg-rose-600 transition-colors backdrop-blur-md"
-                                            >
-                                                <Trash2 size={14} />
-                                            </button>
-                                        </div>
-                                     </div>
-                                 </div>
-                             </>
-                         )}
-                    </div>
-                ))}
-            </div>
-            {bloomPhotos.length === 0 && (
-                <div className="text-center py-10 opacity-40">
-                    <ImageIcon size={48} className="mx-auto mb-2" />
-                    <p className="text-sm">開花写真はまだありません。</p>
-                </div>
+            ))}
+            {(rose.notes || []).length === 0 && (
+                <p className="text-center text-xs text-gray-400 py-4">日誌はまだありません</p>
             )}
         </div>
-    );
-};
-
-const MemoTab: React.FC<{ rose: RoseVariety; onAddNote: (n: RoseNote) => void; onDeleteNote: (id: string) => void; onUpdateNote: (n: RoseNote) => void; onUpdateLegacyMemo: (val: string) => void }> = ({ rose, onAddNote, onDeleteNote, onUpdateNote, onUpdateLegacyMemo }) => {
-    const [noteContent, setNoteContent] = useState('');
-    const [noteDate, setNoteDate] = useState(new Date().toISOString().split('T')[0]);
-    
-    // Edit State
-    const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
-    const [editForm, setEditForm] = useState({ date: '', content: '' });
-
-    const handleAdd = () => {
-        if (!noteContent.trim()) return;
-
-        const [year, month, day] = noteDate.split('-').map(Number);
-        const date = new Date(year, month - 1, day);
-        const now = new Date();
-        if (now.getFullYear() === year && now.getMonth() === month - 1 && now.getDate() === day) {
-            date.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
-        }
-
-        onAddNote({
-            id: crypto.randomUUID(),
-            date: date.toISOString(),
-            content: noteContent
-        });
-        setNoteContent('');
-    };
-
-    const startEditing = (note: RoseNote) => {
-        setEditingNoteId(note.id);
-        const d = new Date(note.date);
-        const offsetMs = d.getTimezoneOffset() * 60 * 1000;
-        const localDate = new Date(d.getTime() - offsetMs);
-        setEditForm({
-            date: localDate.toISOString().split('T')[0],
-            content: note.content
-        });
-    };
-
-    const saveEdit = () => {
-        if (!editingNoteId) return;
-        
-        const [year, month, day] = editForm.date.split('-').map(Number);
-        const date = new Date(year, month - 1, day);
-        // Preserve time if possible or just use date
-        const isoDate = date.toISOString();
-
-        onUpdateNote({
-            id: editingNoteId,
-            date: isoDate,
-            content: editForm.content
-        });
-        setEditingNoteId(null);
-    }
-
-    const notes = useMemo(() => 
-        (rose.notes || []).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    , [rose.notes]);
-
-    return (
-        <div className="space-y-6 pb-10">
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                <div className="flex justify-between items-center mb-2">
-                    <h3 className="font-bold text-gray-800 text-sm flex items-center gap-2">
-                        <BookOpen size={16} className="text-emerald-800"/> 新規作成
-                    </h3>
-                    <input 
-                        type="date"
-                        className="p-1 bg-gray-50 border border-gray-200 rounded text-xs"
-                        value={noteDate}
-                        onChange={(e) => setNoteDate(e.target.value)}
-                    />
-                </div>
-                <textarea 
-                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm min-h-[100px] focus:ring-2 focus:ring-emerald-900 focus:outline-none mb-3"
-                    placeholder="観察記録、成長の様子、アイデア..."
-                    value={noteContent}
-                    onChange={(e) => setNoteContent(e.target.value)}
-                />
-                <Button onClick={handleAdd} disabled={!noteContent.trim()} className="w-full">
-                    日誌に追加
-                </Button>
-            </div>
-
-            {rose.memo && (
-                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-100 relative">
-                    <div className="flex items-center gap-2 mb-2 text-yellow-800 font-bold text-xs uppercase">
-                        <span>基本情報（旧メモ）</span>
-                    </div>
-                    <textarea 
-                        className="w-full bg-transparent border-none text-sm text-gray-700 focus:ring-0 p-0 resize-none"
-                        value={rose.memo}
-                        onChange={(e) => onUpdateLegacyMemo(e.target.value)}
-                        rows={3}
-                    />
-                </div>
-            )}
-
-            <div className="space-y-4">
-                {notes.map(note => (
-                    <div key={note.id} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm relative group">
-                        {editingNoteId === note.id ? (
-                            <div className="space-y-3 animate-fade-in">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-xs font-bold text-emerald-800 uppercase">編集</span>
-                                    <input 
-                                        type="date"
-                                        className="p-1 text-xs border border-gray-200 rounded"
-                                        value={editForm.date}
-                                        onChange={(e) => setEditForm({...editForm, date: e.target.value})}
-                                    />
-                                </div>
-                                <textarea 
-                                    className="w-full p-2 border border-gray-200 rounded text-sm focus:ring-2 focus:ring-emerald-900 focus:outline-none"
-                                    rows={4}
-                                    value={editForm.content}
-                                    onChange={(e) => setEditForm({...editForm, content: e.target.value})}
-                                />
-                                <div className="flex gap-2">
-                                    <Button size="sm" onClick={saveEdit} className="flex-1 h-8 text-xs">
-                                        <CheckCircle2 size={14} className="mr-1"/> 保存
-                                    </Button>
-                                    <Button size="sm" variant="secondary" onClick={() => setEditingNoteId(null)} className="flex-1 h-8 text-xs">
-                                        <X size={14} className="mr-1"/> キャンセル
-                                    </Button>
-                                </div>
-                            </div>
-                        ) : (
-                            <>
-                                <div className="flex justify-between items-start mb-2">
-                                    <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-1 rounded">
-                                        {new Date(note.date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
-                                    </span>
-                                    <div className="flex gap-1">
-                                        <button 
-                                            onClick={() => startEditing(note)}
-                                            className="text-gray-300 hover:text-emerald-600 transition-colors p-1"
-                                            title="編集"
-                                        >
-                                            <Pencil size={14} />
-                                        </button>
-                                        <button 
-                                            onClick={() => onDeleteNote(note.id)}
-                                            className="text-gray-300 hover:text-rose-500 transition-colors p-1"
-                                            title="削除"
-                                        >
-                                            <Trash2 size={14} />
-                                        </button>
-                                    </div>
-                                </div>
-                                <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
-                                    {note.content}
-                                </p>
-                            </>
-                        )}
-                    </div>
-                ))}
-                {notes.length === 0 && !rose.memo && (
-                    <div className="text-center py-8 text-gray-400 italic text-sm">
-                        日誌はまだありません。
-                    </div>
-                )}
-            </div>
-        </div>
-    );
+      </div>
+    </div>
+  );
 };

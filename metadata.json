@@ -1,5 +1,5 @@
 {
-  "name": "Rosarium Pro",
+  "name": "Rosarium Pro v1",
   "description": "本格的なバラ愛好家のための栽培管理アプリ。品種管理、施肥、剪定、成長記録を精密にトラッキングします。",
   "requestFramePermissions": [
     "camera"

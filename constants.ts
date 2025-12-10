@@ -62,6 +62,25 @@ export const ISSUES = [
   { label: '薬剤散布', type: 'PREVENTION' },
 ];
 
+export const CHEMICALS = [
+  {
+    category: "殺菌剤 (病気)",
+    items: ["サプロール", "ベンレート", "ダコニール", "トップジンM", "サルバトーレ", "オーソサイド", "カリグリーン"]
+  },
+  {
+    category: "殺虫剤 (害虫)",
+    items: ["ベニカX", "オルトラン", "スミチオン", "マラソン", "モスピラン", "ダントツ"]
+  },
+  {
+    category: "殺虫殺菌剤 (混合)",
+    items: ["ベニカXネクスト", "ベニカXファイン", "マイローズ"]
+  },
+  {
+    category: "自然派・その他",
+    items: ["ニームオイル", "木酢液", "展着剤"]
+  }
+];
+
 // Dictionary for auto-filling rose features
 export const ROSE_LIBRARY: Record<string, { type: number; feature: string }> = {
   // Rosa Orientis
