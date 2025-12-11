@@ -40,6 +40,12 @@ export const TRANSPLANT_TYPES = [
   { value: 'GROUND', label: '地植え' },
 ];
 
+export const PRUNING_TYPES = [
+  "夏剪定",
+  "冬剪定",
+  "誘引"
+];
+
 export const SOIL_TYPES = [
   { value: 'PREMIUM_ROSE', label: 'プレミアムローズ培養土' },
   { value: 'BIOGOLD', label: 'バイオゴールドの土' },
